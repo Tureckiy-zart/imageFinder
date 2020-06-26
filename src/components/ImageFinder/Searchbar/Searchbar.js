@@ -2,7 +2,10 @@ import styles from "../../../styles2.css";
 
 import React, { Component } from "react";
 class Searchbar extends Component {
-  state = { qwery: "" };
+  state = {
+    qwery: this.props.qwery,
+    page: this.props.page,
+  };
 
   handleChange = ({ target: { value } }) => {
     this.setState({ qwery: value });
@@ -25,7 +28,7 @@ class Searchbar extends Component {
             onChange={this.handleChange}
             className="SearchForm-input"
             type="text"
-            value={qwery}
+            // value={qwery}
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"

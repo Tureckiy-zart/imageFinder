@@ -97,67 +97,79 @@ class DashBoard extends Component {
         webformatWidth: 640,
       },
     ],
-    qwery: "",
+    qwery: "cat",
+    page: 1,
     isLoading: true,
   };
   componentDidMount() {
-    // this.setState({ isLoading: true });
-
-    this.fetcher();
+    this.setState({ isLoading: true });
+    // this.fetcher();
+    this.loadMore();
   }
-  componentDidUpdate(xxx, prevState) {
-    // console.log('prevState.items === this.state.items', this.state.items)
-    // console.log(
-    //   "tjis.state.items",
-    //   this.state
-    // );
-    // this.fetcher()
-    // console.log("prevState---length", prevState.items.length);
-    // console.log("this.state.items.length", this.state.items.length);
-    // console.log("xxx", xxx);
-  }
-  
-  updateItems=(prevState)=>{
-    (prevState.items.length !== this.state.items.length) && this.fetcher();
 
-}
+      addState = async (searchQery) => {
+        await this.setState({ qwery: searchQery });
+        await this.fetcher();
+      };
 
-  addState = (searchQery) => {
-    this.setState({ qwery: searchQery });
-  };
-  fetcher = async (pageNum = 2) => {
+  loadMore = async () => {
+    const { page, qwery } = this.state;
+    console.log('page', page)
     try {
-      const result = await fetchData(this.state.qwery, pageNum=5);
-      const {data: { hits }} = result;
-      console.log("hits", pageNum);
-      this.setState({ items: hits });
-      return hits;
+      const result = await fetchData(qwery, page);
+      this.setState((prevPage) => ({
+        items: [...prevPage.items, ...result],
+        page: prevPage.page + 1,
+      }));
+    } catch (error) {
+      console.log(error);
+    }
+    finally {
+      this.setState({ isLoading: false });
+    }
+  
+  };
+  // addState = async (searchQery) => {
+  //   console.log("searchQery", searchQery);
+  //   await this.setState({ qwery: searchQery });
+  //    this.fetcher(searchQery);
+  // };
+
+  fetcher = async () => {
+    const { page, qwery } = this.state;
+
+    try {
+      const result = await fetchData(qwery, page);
+      this.setState({ items: result, page: 1 });
+      return result;
     } catch (error) {
       console.log("ERROR", error);
     } finally {
       this.setState({ isLoading: false });
     }
   };
-  loadMore = () => {
-    console.log("object", 1111);
-    // this.fetcher(this.state.qwery);
-    // result = await fetchData(this.state.qwery, pageNum +1);
+
+  scroll = () => {
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: "smooth",
+    });
   };
-  // window.scrollTo({
-  //     top: document.documentElement.scrollHeight,
-  //     behavior: "smooth",
-  //   });
+
   render() {
-    const { items,isLoading } = this.state;
-    // console.log("fetcher(this.state.qwery)", this.fetcher(this.state.qwery));
-    console.log("this.state.qwery", this.state);
+    // console.log("this.state.page", this.state.page);
+    // console.log("qwery AFET RENDER", this.state.qwery);
+    const { items, isLoading } = this.state;
+    console.log("this.state.qwery", this.state.items);
     return (
-      // console.log('object', object)
       <>
-        <Searchbar onSubmit={this.addState} />
-        {isLoading ? <Loader/> : <ImageGallery data={items} />}
-        
         {items.length > 0 && <Button onClickLoadMore={this.loadMore} />}
+        <Searchbar
+          onSubmit={this.addState}
+          qwery={this.state.qwery}
+          page={this.state.page}
+        />
+        {isLoading ? <Loader /> : <ImageGallery data={items} />}
       </>
     );
   }
