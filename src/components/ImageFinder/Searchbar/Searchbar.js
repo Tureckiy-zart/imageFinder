@@ -3,23 +3,22 @@ import styles from "../../../styles2.css";
 import React, { Component } from "react";
 class Searchbar extends Component {
   state = {
-    qwery: this.props.qwery,
-    page: this.props.page,
+    qwery: "",
   };
 
-  handleChange = ({ target: { value } }) => {
-    this.setState({ qwery: value });
-  };
+  handleChange = ({ target: { value } }) => this.setState({ qwery: value });
 
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.onSubmit(this.state.qwery);
+    this.setState({ qwery: "" });
   };
   render() {
     const { qwery } = this.state;
     return (
       <header className="Searchbar">
-        <form className="SearchForm" onClick={this.handleSubmit}>
+        <form className="SearchForm" onSubmit={this.handleSubmit}>
+          {/* <form className="SearchForm" onClick={this.props.xxx}> */}
           <button type="submit" className="SearchForm-button">
             <span className="SearchForm-button-label">Search</span>
           </button>
@@ -28,13 +27,12 @@ class Searchbar extends Component {
             onChange={this.handleChange}
             className="SearchForm-input"
             type="text"
-            // value={qwery}
+            value={qwery}
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
           />
         </form>
-        <p>{this.state.qwery}</p>
       </header>
     );
   }

@@ -8,141 +8,49 @@ import Loader from "react-loader-spinner";
 
 class DashBoard extends Component {
   state = {
-    items: [
-      {
-        comments: 28,
-        downloads: 8662,
-        favorites: 33,
-        id: 5319835,
-        imageHeight: 2811,
-        imageSize: 3199811,
-        imageWidth: 4217,
-        largeImageURL:
-          "https://pixabay.com/get/53e3d44a4251a914f6da8c7dda793678123adced52526c48702679dd9549c051bb_1280.jpg",
-        likes: 55,
-        pageURL:
-          "https://pixabay.com/photos/scenery-moon-sky-town-night-city-5319835/",
-        previewHeight: 100,
-        previewURL:
-          "https://cdn.pixabay.com/photo/2020/06/20/06/34/scenery-5319835_150.jpg",
-        previewWidth: 150,
-        tags: "scenery, moon, sky",
-        type: "photo",
-        user: "Syaibatulhamdi",
-        userImageURL:
-          "https://cdn.pixabay.com/user/2020/01/29/07-13-31-807_250x250.jpg",
-        user_id: 13452116,
-        views: 9892,
-        webformatHeight: 427,
-        webformatURL:
-          "https://pixabay.com/get/53e3d44a4251a914f1dc846096293179103dd6e4504c704c7c2d72d69f4cc459_640.jpg",
-        webformatWidth: 640,
-      },
-      {
-        comments: 28,
-        downloads: 8662,
-        favorites: 33,
-        id: 53123423429835,
-        imageHeight: 2811,
-        imageSize: 3199811,
-        imageWidth: 4217,
-        largeImageURL:
-          "https://pixabay.com/get/53e3d44a4251a914f6da8c7dda793678123adced52526c48702679dd9549c051bb_1280.jpg",
-        likes: 55,
-        pageURL:
-          "https://pixabay.com/photos/scenery-moon-sky-town-night-city-5319835/",
-        previewHeight: 100,
-        previewURL:
-          "https://cdn.pixabay.com/photo/2020/06/20/06/34/scenery-5319835_150.jpg",
-        previewWidth: 150,
-        tags: "scenery, moon, sky",
-        type: "photo",
-        user: "Syaibatulhamdi",
-        userImageURL:
-          "https://cdn.pixabay.com/user/2020/01/29/07-13-31-807_250x250.jpg",
-        user_id: 13452234234116,
-        views: 9892,
-        webformatHeight: 427,
-        webformatURL:
-          "https://pixabay.com/get/53e3d44a4251a914f1dc846096293179103dd6e4504c704c7c2d72d69348cc5b_640.jpg",
-        webformatWidth: 640,
-      },
-      {
-        comments: 28,
-        downloads: 8662,
-        favorites: 33,
-        id: 5315675675679835,
-        imageHeight: 2811,
-        imageSize: 3199811,
-        imageWidth: 4217,
-        largeImageURL:
-          "https://pixabay.com/get/53e3d44a4251a914f6da8c7dda793678123adced52526c48702679dd9549c051bb_1280.jpg",
-        likes: 55,
-        pageURL:
-          "https://pixabay.com/photos/scenery-moon-sky-town-night-city-5319835/",
-        previewHeight: 100,
-        previewURL:
-          "https://cdn.pixabay.com/photo/2020/06/20/06/34/scenery-5319835_150.jpg",
-        previewWidth: 150,
-        tags: "scenery, moon, sky",
-        type: "photo",
-        user: "Syaibatulhamdi",
-        userImageURL:
-          "https://cdn.pixabay.com/user/2020/01/29/07-13-31-807_250x250.jpg",
-        user_id: 13452116,
-        views: 9892,
-        webformatHeight: 427,
-        webformatURL:
-          "https://pixabay.com/get/53e3d44a4251a914f1dc846096293179103dd6e4504c704c7c2d72d69348cc5b_640.jpg",
-        webformatWidth: 640,
-      },
-    ],
-    qwery: "cat",
+    items: [],
+    qwery: "vishnu",
     page: 1,
     isLoading: true,
+    error: null,
   };
   componentDidMount() {
     this.setState({ isLoading: true });
-    // this.fetcher();
-    this.loadMore();
+    this.fetcher();
   }
-
-      addState = async (searchQery) => {
-        await this.setState({ qwery: searchQery });
-        await this.fetcher();
-      };
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.qwery !== this.state.qwery) {
+      this.fetcher();
+    }
+    if (prevState.page !== this.state.page) {
+      this.loadMore();
+    }
+    scroll()
+  }
+  addState = async (searchQery) => await this.setState({ qwery: searchQery });
 
   loadMore = async () => {
     const { page, qwery } = this.state;
-    console.log('page', page)
-    try {
-      const result = await fetchData(qwery, page);
-      this.setState((prevPage) => ({
-        items: [...prevPage.items, ...result],
-        page: prevPage.page + 1,
-      }));
-    } catch (error) {
-      console.log(error);
-    }
-    finally {
-      this.setState({ isLoading: false });
-    }
-  
+    const result = await fetchData(qwery, page);
+    this.setState((prevPage) => ({
+      items: [...prevPage.items, ...result],
+    }));
   };
-  // addState = async (searchQery) => {
-  //   console.log("searchQery", searchQery);
-  //   await this.setState({ qwery: searchQery });
-  //    this.fetcher(searchQery);
-  // };
+  // xxx=(evt)=>{
+  //   evt.preventDefault()
+  //   const qwery = evt.currentTarget.elements[1].value;
+  // }
+
+  upPage = () => this.setState({ page: this.state.page + 1 });
 
   fetcher = async () => {
     const { page, qwery } = this.state;
-
     try {
       const result = await fetchData(qwery, page);
       this.setState({ items: result, page: 1 });
       return result;
     } catch (error) {
+      this.setState({ error });
       console.log("ERROR", error);
     } finally {
       this.setState({ isLoading: false });
@@ -157,18 +65,12 @@ class DashBoard extends Component {
   };
 
   render() {
-    // console.log("this.state.page", this.state.page);
-    // console.log("qwery AFET RENDER", this.state.qwery);
     const { items, isLoading } = this.state;
-    console.log("this.state.qwery", this.state.items);
     return (
       <>
-        {items.length > 0 && <Button onClickLoadMore={this.loadMore} />}
-        <Searchbar
-          onSubmit={this.addState}
-          qwery={this.state.qwery}
-          page={this.state.page}
-        />
+        {/* {items.length > 0 && <Button onClickLoadMore={this.loadMore} />} */}
+        {items.length > 0 && <Button onClickLoadMore={this.upPage} />}
+        <Searchbar onSubmit={this.addState} />
         {isLoading ? <Loader /> : <ImageGallery data={items} />}
       </>
     );

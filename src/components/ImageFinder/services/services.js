@@ -9,7 +9,7 @@ export const fetchData = async (qwery, pageNum) => {
     `${BASE_URL}?q=${qwery}&page=${pageNum}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`
     );
   dataFormAPI = dataFormAPI.data.hits;
-  console.log("dataFormAPI", dataFormAPI);
+  // console.log("dataFormAPI", dataFormAPI);
   return dataFormAPI;
 };
 
